@@ -13,7 +13,20 @@ function ProviderConfig() {
   });
 
   const handleAddProvider = async () => {
-    // TO DO: implement add provider
+    try {
+      const response = await axios.post('http://localhost:8000/provider', newProvider);
+      setProviders([...providers, response.data]);
+      setNewProvider({
+        name: '',
+        api_key: '',
+        temperature: 0,
+        max_tokens: 0,
+        top_p: 0,
+        context_length: 0,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
