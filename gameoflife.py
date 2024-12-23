@@ -43,8 +43,11 @@ class Game:
             print("Available actions:")
             print("  go north")
             print("  go south")
-            print("  take item")
-            print("  use item")
+            available_items = [item for item in self.rooms[self.current_room] if item not in ["description", "north", "south"]]
+            if available_items:
+                print("  take item")
+            if self.player.inventory:
+                print("  use item")
             print("  eat")
             print("  drink")
             action = input("What do you want to do? ")
