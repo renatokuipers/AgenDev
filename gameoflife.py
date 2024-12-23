@@ -6,11 +6,13 @@ class Player:
     def __init__(self, name):
         self.name = name
         self.health = 100
+        self.hunger = 100
+        self.thirst = 100
         self.inventory = []
         self.sanity = 100
 
     def is_alive(self):
-        return self.health > 0 and self.sanity > 0
+        return self.health > 0 and self.sanity > 0 and self.hunger > 0 and self.thirst > 0
 
     def take_damage(self, amount):
         self.health -= amount
@@ -27,11 +29,12 @@ class Game:
         self.player = Player("Protagonist")
         self.current_room = "entrance"
         self.rooms = {
-            "entrance": {"description": "You are at the entrance of the house.", "north": "hallway", "south": "garden"},
-            "hallway": {"description": "You are in the hallway.", "south": "entrance", "north": "room"},
-            "garden": {"description": "You are in the garden.", "north": "entrance"},
-            "room": {"description": "You are in a room.", "south": "hallway"}
+            "entrance": {"description": "You are at the entrance of an abandoned asylum. You've been searching for your missing sister for weeks, and you finally got a tip that she might be here.", "north": "hallway", "south": "garden"},
+            "hallway": {"description": "You are in a long, dark hallway. You can hear the sound of footsteps echoing in the distance.", "south": "entrance", "north": "room"},
+            "garden": {"description": "You are in a overgrown garden. You can see a figure in the distance, but it's too far away to make out any features.", "north": "entrance"},
+            "room": {"description": "You are in a room that looks like it was once a patient's room. There's a bed in the corner, and a small table with a journal on it.", "south": "hallway"}
         }
+        self.story_progress = 0
 
     def play(self):
         print("Welcome to the horror game!")
@@ -40,34 +43,66 @@ class Game:
             print("Available actions:")
             print("  go north")
             print("  go south")
-            print("  take key")
-            print("  use key")
+            print("  take item")
+            print("  use item")
+            print("  eat")
+            print("  drink")
             action = input("What do you want to do? ")
             if action.lower() == "go north" and "north" in self.rooms[self.current_room]:
                 self.current_room = self.rooms[self.current_room]["north"]
+                self.player.hunger -= 10
+                self.player.thirst -= 10
             elif action.lower() == "go south" and "south" in self.rooms[self.current_room]:
                 self.current_room = self.rooms[self.current_room]["south"]
-            elif action.lower() == "take key":
-                self.player.inventory.append("key")
-                print("You took the key.")
-            elif action.lower() == "use key":
-                if "key" in self.player.inventory:
-                    print("You unlocked the door.")
-                    self.current_room = "room"
+                self.player.hunger -= 10
+                self.player.thirst -= 10
+            elif action.lower() == "take item":
+                if self.current_room == "room" and self.story_progress == 0:
+                    self.player.inventory.append("journal")
+                    print("You took the journal.")
+                    self.story_progress += 1
                 else:
-                    print("You don't have a key.")
+                    print("There's nothing to take.")
+            elif action.lower() == "use item":
+                if "journal" in self.player.inventory:
+                    print("You read the journal. It seems your sister was a patient here, and she was being treated for a rare mental illness.")
+                    self.story_progress += 1
+                else:
+                    print("You don't have anything to use.")
+            elif action.lower() == "eat":
+                if "food" in self.player.inventory:
+                    self.player.hunger += 50
+                    self.player.inventory.remove("food")
+                    print("You ate some food.")
+                else:
+                    print("You don't have any food.")
+            elif action.lower() == "drink":
+                if "water" in self.player.inventory:
+                    self.player.thirst += 50
+                    self.player.inventory.remove("water")
+                    print("You drank some water.")
+                else:
+                    print("You don't have any water.")
             else:
                 print("Invalid action.")
                 self.player.lose_sanity(10)
             if random.random() < 0.1:
                 self.player.take_damage(10)
                 print("You were attacked by a monster!")
+            if self.player.hunger <= 0:
+                self.player.take_damage(10)
+                print("You're starving!")
+            if self.player.thirst <= 0:
+                self.player.take_damage(10)
+                print("You're dehydrated!")
             time.sleep(1)
         print("Game over.")
         if self.player.health <= 0:
             print("You died.")
         elif self.player.sanity <= 0:
             print("You went insane.")
+        elif self.story_progress == 2:
+            print("You found your sister! She's alive and well. Congratulations, you won!")
 
 game = Game()
 game.play()
