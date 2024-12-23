@@ -51,12 +51,34 @@ providerSelect.addEventListener('change', (e) => {
     baseUrlInput.value = providerConfig['base-url'];
 });
 
-chatForm.addEventListener('submit', (e) => {
+chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const provider = providerSelect.value;
     const apiKey = apiKeyInput.value;
     const model = modelInput.value;
     const baseUrl = baseUrlInput.value;
+    const messageInput = document.getElementById('message');
+    const message = messageInput.value;
     // Make API call to the selected provider
-    console.log(`Making API call to ${provider} with API key ${apiKey}, model ${model}, and base URL ${baseUrl}`);
+    try {
+        const response = await fetch(`${baseUrl}completions`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'model': model,
+                'prompt': message,
+                'max_tokens': 2048
+            })
+        });
+        const data = await response.json();
+        const responseMessage = data.choices[0].text;
+        const chatLogHtml = `<p>You: ${message}</p><p>AI: ${responseMessage}</p>`;
+        chatLog.innerHTML += chatLogHtml;
+        messageInput.value = '';
+    } catch (error) {
+        console.error(error);
+    }
 });
