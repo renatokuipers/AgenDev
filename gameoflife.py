@@ -10,9 +10,24 @@ class Player:
         self.thirst = 100
         self.inventory = []
         self.sanity = 100
+        self.root = tk.Tk()
+        self.root.title("Horror Game")
+        self.label = tk.Label(self.root, text="Welcome to the horror game!")
+        self.label.pack()
+        self.entry = tk.Entry(self.root)
+        self.entry.pack()
+        self.button = tk.Button(self.root, text="Submit", command=self.submit_action)
+        self.button.pack()
+        self.text_box = tk.Text(self.root)
+        self.text_box.pack()
 
     def is_alive(self):
         return self.health > 0 and self.sanity > 0 and self.hunger > 0 and self.thirst > 0
+
+    def submit_action(self):
+        action = self.entry.get()
+        self.entry.delete(0, tk.END)
+        # rest of the game logic will go here
 
     def take_damage(self, amount):
         self.health -= amount
@@ -35,6 +50,16 @@ class Game:
             "room": {"description": "You are in a room that looks like it was once a patient's room. There's a bed in the corner, and a small table with a journal on it.", "south": "hallway"}
         }
         self.story_progress = 0
+        self.player.text_box.insert(tk.END, self.rooms[self.current_room]["description"])
+        self.player.text_box.insert(tk.END, "\nAvailable actions:")
+        available_items = [item for item in self.rooms[self.current_room] if item not in ["description", "north", "south"]]
+        if available_items:
+            self.player.text_box.insert(tk.END, "\n  take item")
+        if self.player.inventory:
+            self.player.text_box.insert(tk.END, "\n  use item")
+        self.player.text_box.insert(tk.END, "\n  eat")
+        self.player.text_box.insert(tk.END, "\n  drink")
+        self.player.root.update()
 
     def play(self):
         print("Welcome to the horror game!")
