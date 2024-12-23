@@ -61,22 +61,31 @@ chatForm.addEventListener('submit', async (e) => {
     const message = messageInput.value;
     // Make API call to the selected provider
     try {
-        const response = await fetch(`${baseUrl}completions`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                'model': model,
-                'prompt': message,
-                'max_tokens': 2048
-            })
-        });
-        const data = await response.json();
-        const responseMessage = data.choices[0].text;
-        const chatLogHtml = `<p>You: ${message}</p><p>AI: ${responseMessage}</p>`;
-        chatLog.innerHTML += chatLogHtml;
+        const endpoint = `${baseUrl}completions`;
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'model': model,
+                    'prompt': message,
+                    'max_tokens': 2048
+                })
+            });
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error(`Error: ${errorData.error}`);
+            const chatLogHtml = `<p>Error: ${errorData.error}</p>`;
+            chatLog.innerHTML += chatLogHtml;
+        } else {
+            const data = await response.json();
+            const responseMessage = data.choices[0].text;
+            const chatLogHtml = `<p>You: ${message}</p><p>AI: ${responseMessage}</p>`;
+            chatLog.innerHTML += chatLogHtml;
+        }
         messageInput.value = '';
     } catch (error) {
         console.error(error);
