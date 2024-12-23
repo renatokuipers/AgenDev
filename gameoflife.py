@@ -18,6 +18,11 @@ class Game:
         print("Welcome to the horror game!")
         while self.player.is_alive():
             print("\nYou are in the", self.current_room)
+            print("Available actions:")
+            print("  go north")
+            print("  go south")
+            print("  take key")
+            print("  use key")
             action = input("What do you want to do? ")
             if action.lower() == "go north":
                 self.current_room = "hallway"
