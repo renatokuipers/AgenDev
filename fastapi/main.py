@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import APIRouter
+from .routes import chat, auth, users
 
 app = FastAPI()
 
@@ -16,12 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-router = APIRouter()
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("fastapi.main:app", host="0.0.0.0", port=8000, reload=True)
+app.include_router(chat.router)
+app.include_router(auth.router)
+app.include_router(users.router)
