@@ -5,10 +5,10 @@ Implements conversation panel, message history display, and conversation control
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel, 
     QPushButton, QTextEdit, QLineEdit, QScrollArea, 
-    QSizePolicy, QSpacerItem, QMenu, QAction
+    QSizePolicy, QSpacerItem, QMenu
 )
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, pyqtSlot, QTimer
-from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor, QKeySequence, QShortcut
+from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor, QKeySequence, QShortcut, QAction
 import html
 import time
 

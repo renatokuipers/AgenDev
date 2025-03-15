@@ -4,7 +4,7 @@ Implements terminal component, formats command output, and handles terminal text
 """
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPlainTextEdit, 
-    QLineEdit, QPushButton, QScrollBar, QFrame
+    QLineEdit, QPushButton, QScrollBar, QFrame, QLabel
 )
 from PyQt6.QtCore import Qt, pyqtSignal, pyqtSlot, QProcess, QTimer
 from PyQt6.QtGui import QColor, QTextCharFormat, QTextCursor, QFont, QTextOption
